@@ -1,0 +1,12 @@
+.{
+    .name = .monkey_language,
+    .version = "0.0.0",
+    .fingerprint = 0x29b2a56c73da86a8,
+    .minimum_zig_version = "0.15.2",
+    .dependencies = .{},
+    .paths = .{
+        "build.zig",
+        "build.zig.zon",
+        "src",
+    },
+}
