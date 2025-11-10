@@ -1,4 +1,3 @@
-const std = @import("std");
 const Token = @import("./token.zig").Token;
 const TokenIdentifier = @import("./token.zig").TokenIdentifier;
 
@@ -51,6 +50,8 @@ pub fn Lexer() type {
 }
 
 test "next token" {
+    const testing = @import("std").testing;
+    const mem = @import("std").mem;
     const input = "=+(){},;";
     const expectedTokens = [_]Token(){
         Token().init(TokenIdentifier.ASSIGN, &[_]u8{'='}),
@@ -66,9 +67,7 @@ test "next token" {
     var lexer = Lexer().init(input);
     for (expectedTokens) |e| {
         const t = lexer.nextToken();
-        try std.testing.expectEqual(e.identifier, t.identifier);
-        std.debug.print("e = {any} t = {any}\n", .{ e, t });
-        try std.testing.expect(std.mem.eql(u8, e.literal, t.literal));
-        // try std.testing.expectEqual(e.literal, t.literal);
+        try testing.expectEqual(e.identifier, t.identifier);
+        try testing.expect(mem.eql(u8, e.literal, t.literal));
     }
 }

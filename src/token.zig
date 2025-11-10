@@ -28,3 +28,10 @@ pub const TokenIdentifier = enum {
     FUNCTION,
     LET,
 };
+
+test "create token" {
+    const testing = @import("std").testing;
+    const token = Token().init(.SEMICOLON, ";");
+    try testing.expectEqual(TokenIdentifier.SEMICOLON, token.identifier);
+    try testing.expectEqual(";", token.literal);
+}
