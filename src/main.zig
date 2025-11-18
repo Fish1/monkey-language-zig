@@ -1,8 +1,7 @@
 const std = @import("std");
-const lexer = @import("lexer.zig");
 
 pub fn main() !void {
-    std.debug.print("All your {s} are belong to us.\n", .{"codebase"});
+    std.debug.print("Monkey Language!\n", .{});
 }
 
 comptime {
