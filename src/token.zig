@@ -21,8 +21,13 @@ pub fn IdentLookup() type {
 
         pub fn init(allocator: Allocator) !@This() {
             var map = StringHashMap.init(allocator);
-            try map.put("FUNCTION", .FUNCTION);
-            try map.put("LET", .LET);
+            try map.put("fn", .FUNCTION);
+            try map.put("if", .IF);
+            try map.put("else", .ELSE);
+            try map.put("return", .RETURN);
+            try map.put("let", .LET);
+            try map.put("true", .TRUE);
+            try map.put("false", .FALSE);
             return .{
                 .map = map,
             };
@@ -45,14 +50,27 @@ pub const TokenIdentifier = enum {
     INT,
     ASSIGN,
     PLUS,
+    MINUS,
+    BANG,
+    ASTERISK,
+    SLASH,
     COMMA,
     SEMICOLON,
     LPAREN,
     RPAREN,
     LBRACE,
     RBRACE,
+    LT,
+    GT,
+    EQ,
+    NOT_EQ,
     FUNCTION,
     LET,
+    IF,
+    ELSE,
+    RETURN,
+    TRUE,
+    FALSE,
 };
 
 test "create token" {
@@ -65,16 +83,14 @@ test "create token" {
 test "ident lookup" {
     const testing = @import("std").testing;
     const allocator = @import("std").testing.allocator;
-    const debug = @import("std").debug;
+    // const debug = @import("std").debug;
 
     var il = try IdentLookup().init(allocator);
     defer il.deinit();
-    const ident = il.lookup("FUNCTION");
+    const ident = il.lookup("fn");
 
-    debug.print("THING: {any}\n", .{ident});
-    if (ident) |y| {
-        debug.print("THING: {any}\n", .{y});
-        try testing.expectEqual(TokenIdentifier.FUNCTION, y);
+    if (ident) |i| {
+        try testing.expectEqual(TokenIdentifier.FUNCTION, i);
     } else {
         try testing.expect(false);
     }
