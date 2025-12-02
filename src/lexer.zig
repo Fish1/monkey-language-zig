@@ -23,16 +23,14 @@ pub fn Lexer() type {
 
         pub fn nextToken(self: *@This()) !Token() {
             const allocator = @import("std").testing.allocator;
-            const debug = @import("std").debug;
             var il = try IdentLookup().init(allocator);
             defer il.deinit();
             self.skipWhitespace();
             const token = switch (self.ch) {
                 '=' => {
                     if (self.peekChar()) |c| {
-                        const prev = self.prevChar();
-                        debug.print("curr = {s} , peek = {s}, prev = {s}\n", .{ &[1]u8{self.ch}, &[1]u8{c}, &[1]u8{prev} });
                         if (c == '=') {
+                            self.readChar();
                             self.readChar();
                             return Token().init(TokenIdentifier.EQ, "==");
                         }
@@ -47,6 +45,7 @@ pub fn Lexer() type {
                 '!' => {
                     if (self.peekChar()) |c| {
                         if (c == '=') {
+                            self.readChar();
                             self.readChar();
                             return Token().init(TokenIdentifier.NOT_EQ, "!=");
                         }
@@ -71,27 +70,19 @@ pub fn Lexer() type {
                         return Token().init(TokenIdentifier.IDENT, literal);
                     } else if (self.isNumber(self.ch)) {
                         const literal = self.readNumber();
-                        const prev = self.prevChar();
-                        const next = self.peekChar() orelse 0;
-                        debug.print("read number done curr = {s} , prev = {s}, next = {s}\n", .{ &[1]u8{self.ch}, &[1]u8{prev}, &[1]u8{next} });
                         return Token().init(TokenIdentifier.INT, literal);
                     } else {
                         return Token().init(TokenIdentifier.ILLEGAL, &[1]u8{self.ch});
                     }
                 },
             };
-
-            debug.print("loop done! ch = {s} \n", .{&[1]u8{self.ch}});
             self.readChar();
             return token;
         }
 
         fn skipWhitespace(self: *@This()) void {
-            const debug = @import("std").debug;
-            debug.print("[skip whitespace] current = {s}\n", .{&[1]u8{self.ch}});
             while (self.ch == ' ' or self.ch == '\t' or self.ch == '\n' or self.ch == '\r') {
                 self.readChar();
-                debug.print("SKIPPED! now on {s}\n", .{&[1]u8{self.ch}});
             }
         }
 
@@ -99,7 +90,7 @@ pub fn Lexer() type {
             if (self.readPosition >= self.input.len) {
                 return null;
             }
-            const out = self.input[self.readPosition + 1];
+            const out = self.input[self.readPosition];
             return out;
         }
 
