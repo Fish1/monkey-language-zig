@@ -22,7 +22,7 @@ pub fn Lexer() type {
         }
 
         pub fn nextToken(self: *@This()) !Token() {
-            const allocator = @import("std").testing.allocator;
+            const allocator = @import("std").heap.page_allocator;
             var il = try IdentLookup().init(allocator);
             defer il.deinit();
             self.skipWhitespace();
